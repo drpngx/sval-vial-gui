@@ -76,6 +76,12 @@
                 { "type": "integer", "title": "Maximum number of scroll steps per scroll action", "qsid": 16, "min": 0, "max": 1000, "width": 2 },
                 { "type": "integer", "title": "Time until maximum scroll speed is reached", "qsid": 17, "min": 0, "max": 1000, "width": 2 }
             ]
+        },
+        {
+            "name": "Sval",
+            "fields": [
+                { "type": "boolean", "title": "Disable achordion", "qsid": 500, "width": 1 }
+            ]
         }
     ]
 }
