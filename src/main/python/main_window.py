@@ -258,6 +258,7 @@ class MainWindow(QMainWindow):
                 with open(dialog.selectedFiles()[0], "rb") as inf:
                     data = inf.read()
                 self.keymap_editor.restore_layout(data)
+                self.qmk_settings.update_custom_layout(data)
                 self.rebuild()
 
     def on_layout_save(self):
