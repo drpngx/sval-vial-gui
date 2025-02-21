@@ -281165,21 +281165,6 @@
                 { "type": "integer", "title": "Maximum number of scroll steps per scroll action", "qsid": 16, "min": 0, "max": 1000, "width": 2 },
                 { "type": "integer", "title": "Time until maximum scroll speed is reached", "qsid": 17, "min": 0, "max": 1000, "width": 2 }
             ]
-        },
-        {
-            "name": "Sval",
-            "_comment": "Custom settings for Svalboard. Must be sync'd with qmk_firmware/keyboards/svalboard/user_settings.c",
-            "fields": [
-                { "type": "boolean", "title": "Achordion mode", "qsid": 500, "width": 1 },
-                { "type": "boolean", "title": "Automouse", "qsid": 501, "width": 1 },
-                { "type": "boolean", "title": "Left mouse scroll", "qsid": 502, "width": 1, "bit": 0 },
-                { "type": "boolean", "title": "Right mouse scroll", "qsid": 502, "width": 1, "bit": 1 },
-                { "type": "integer", "title": "Automouse timeout index (1-4)", "qsid": 503, "width": 1 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 0", "qsid": 504, "width": 2 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 1", "qsid": 505, "width": 2 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 2", "qsid": 506, "width": 2 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 3", "qsid": 507, "width": 2 }
-            ]
         }
     ]
 }
@@ -293206,6 +293191,7 @@ class MainWindow(QMainWindow):
                 with open(dialog.selectedFiles()[0], "rb") as inf:
                     data = inf.read()
                 self.keymap_editor.restore_layout(data)
+                self.qmk_settings.update_custom_layout(data)
                 self.rebuild()
 
     def on_layout_save(self):
@@ -300060,6 +300046,8 @@ class QmkSettings(BasicEditor):
         self.tabs = []
         self.misc_widgets = []
 
+        self.custom_settings_tab_defs = []  # Present in the layout file.
+
     def populate_tab(self, tab, container):
         options = []
         for field in tab["fields"]:
@@ -300091,7 +300079,7 @@ class QmkSettings(BasicEditor):
             self.tabs_widget.removeTab(0)
 
         # create new GUI
-        for tab in self.settings_defs["tabs"]:
+        for tab in self.settings_defs["tabs"] + self.custom_settings_tab_defs:
             # don't bother creating tabs that would be empty - i.e. at least one qsid in a tab should be supported
             use_tab = False
             for field in tab["fields"]:
@@ -300142,6 +300130,16 @@ class QmkSettings(BasicEditor):
 
         self.btn_save.setEnabled(changed)
         self.btn_undo.setEnabled(changed)
+
+    def update_custom_layout(self, data: str):
+        # Add the layout-defined tabs. A self.recreate_gui will be issued shortly.
+        layout = json.loads(data)
+        custom_tabs = layout.get("vial_meta_custom_qmk_settings")
+        if not custom_tabs:
+            return
+        if not isinstance(custom_tabs, list):
+            return  # TODO(drpngx): use a popup
+        self.custom_settings_tab_defs = list(custom_tabs)
 
     def rebuild(self, device):
         super().rebuild(device)
@@ -300907,6 +300905,8 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
         self.encoderpos = OrderedDict()
         self.layout = dict()
         self.encoder_layout = dict()
+        # Definition for custom qmk settings.
+        self.vial_meta_custom_qmk_settings = []
 
         self.reload_layout(sideload_json)
         self.reload_layers()
@@ -301231,6 +301231,7 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
         data["tap_dance"] = self.save_tap_dance()
         data["combo"] = self.save_combo()
         data["key_override"] = self.save_key_override()
+        data["vial_meta_custom_qmk_settings"] = self.vial_meta_custom_qmk_settings
         data["settings"] = self.settings
 
         return json.dumps(data).encode("utf-8")
@@ -301259,7 +301260,7 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
         self.restore_tap_dance(data.get("tap_dance", []))
         self.restore_combo(data.get("combo", []))
         self.restore_key_override(data.get("key_override", []))
-
+        self.vial_meta_custom_qmk_settings = data.get("vial_meta_custom_qmk_settings", [])
         for qsid, value in data.get("settings", dict()).items():
             from editor.qmk_settings import QmkSettings
 
