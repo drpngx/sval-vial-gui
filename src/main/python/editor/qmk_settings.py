@@ -125,8 +125,8 @@ class QmkSettings(BasicEditor):
     def populate_tab(self, tab, container):
         options = []
         for field in tab["fields"]:
-            DEBUG.write('pop: %s:%s/%s: skip=%s\n',
-                        field["qsid"], field["type"], field["qsid"] not in self.keyboard.supported_settings)
+            DEBUG.write('pop: %s:%s/%s: skip=%s\n' % (
+                        field["qsid"], field["type"], field["qsid"] not in self.keyboard.supported_settings))
             DEBUG.flush()
             if field["qsid"] not in self.keyboard.supported_settings:
                 continue
