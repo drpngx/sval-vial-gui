@@ -301,7 +301,7 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
 
         f.flush()
         from editor.qmk_settings import QmkSettings
-        f.write("qmk settings: %s" % QmkSettings.qsid_fields)
+        f.write("qmk settings: %s\n" % QmkSettings.qsid_fields)
         f.flush()
         for qsid in self.supported_settings:
             from editor.qmk_settings import QmkSettings

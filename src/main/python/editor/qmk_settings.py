@@ -270,12 +270,12 @@ class QmkSettings(BasicEditor):
         """ Deserialize from binary received from firmware into internal representation """
         fields = cls.qsid_fields[qsid]
         if fields[0]["type"] == "boolean":
-            DEBUG.write('qsid deserialize: bool %s = %s\n', qsid, int.from_bytes(data[0:fields[0].get("width", 1)], byteorder="little"))
+            DEBUG.write('qsid deserialize: bool %s = %s\n' % (qsid, int.from_bytes(data[0:fields[0].get("width", 1)], byteorder="little")))
             DEBUG.flush()
             return int.from_bytes(data[0:fields[0].get("width", 1)], byteorder="little")
         elif fields[0]["type"] == "integer":
             assert len(fields) == 1
-            DEBUG.write('qsid deserialize: int %s = %s\n', qsid, int.from_bytes(data[0:fields[0]["width"]], byteorder="little"))
+            DEBUG.write('qsid deserialize: int %s = %s\n' % (qsid, int.from_bytes(data[0:fields[0]["width"]], byteorder="little")))
             DEBUG.flush()
             return int.from_bytes(data[0:fields[0]["width"]], byteorder="little")
         else:
