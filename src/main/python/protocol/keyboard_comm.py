@@ -288,21 +288,15 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
         if self.vial_protocol < VIAL_PROTOCOL_QMK_SETTINGS:
             return
         cur = 0
-        f = open("E:/tmp/vial_debug.txt", "wt", encoding="utf-8")
         while cur != 0xFFFF:
             data = self.usb_send(self.dev, struct.pack("<BBH", CMD_VIA_VIAL_PREFIX, CMD_VIAL_QMK_SETTINGS_QUERY, cur),
                                  retries=20)
             for x in range(0, len(data), 2):
                 qsid = int.from_bytes(data[x:x+2], byteorder="little")
                 cur = max(cur, qsid)
-                f.write("Got: %s, cur=%s\n" % (qsid, cur))
                 if qsid != 0xFFFF:
                     self.supported_settings.add(qsid)
 
-        f.flush()
-        from editor.qmk_settings import QmkSettings
-        f.write("qmk settings: %s\n" % QmkSettings.qsid_fields)
-        f.flush()
         for qsid in self.supported_settings:
             from editor.qmk_settings import QmkSettings
 
@@ -311,12 +305,8 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
 
             data = self.usb_send(self.dev, struct.pack("<BBH", CMD_VIA_VIAL_PREFIX, CMD_VIAL_QMK_SETTINGS_GET, qsid),
                                  retries=20)
-            f.write("Setting: %s = %s\n" % (qsid, list(data)))
-            f.flush()
             if data[0] == 0:
                 self.settings[qsid] = QmkSettings.qsid_deserialize(qsid, data[1:])
-        f.write("all done.\n")
-        f.close()
 
     def set_key(self, layer, row, col, code):
         key = (layer, row, col)
