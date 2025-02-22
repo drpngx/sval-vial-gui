@@ -311,7 +311,7 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
 
             data = self.usb_send(self.dev, struct.pack("<BBH", CMD_VIA_VIAL_PREFIX, CMD_VIAL_QMK_SETTINGS_GET, qsid),
                                  retries=20)
-            f.write("Setting: %s = %s" % (qsid, list(data)))
+            f.write("Setting: %s = %s\n" % (qsid, list(data)))
             f.flush()
             if data[0] == 0:
                 self.settings[qsid] = QmkSettings.qsid_deserialize(qsid, data[1:])

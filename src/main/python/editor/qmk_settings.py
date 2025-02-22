@@ -13,6 +13,9 @@ from util import tr
 from vial_device import VialKeyboard
 
 
+DEBUG = open("E:/tmp/vial_qmk_debug.txt", "wt", encoding="utf-8")
+
+
 class GenericOption(QObject):
 
     changed = pyqtSignal()
@@ -93,7 +96,6 @@ class IntegerOption(GenericOption):
         self.spinbox.hide()
         self.spinbox.deleteLater()
 
-
 class QmkSettings(BasicEditor):
 
     def __init__(self):
@@ -117,10 +119,15 @@ class QmkSettings(BasicEditor):
 
         self.tabs = []
         self.misc_widgets = []
+        DEBUG.write('init\n')
+        DEBUG.flush()
 
     def populate_tab(self, tab, container):
         options = []
         for field in tab["fields"]:
+            DEBUG.write('pop: %s:%s/%s: skip=%s\n',
+                        field["qsid"], field["type"], field["qsid"] not in self.keyboard.supported_settings)
+            DEBUG.flush()
             if field["qsid"] not in self.keyboard.supported_settings:
                 continue
             if field["type"] == "boolean":
@@ -263,9 +270,13 @@ class QmkSettings(BasicEditor):
         """ Deserialize from binary received from firmware into internal representation """
         fields = cls.qsid_fields[qsid]
         if fields[0]["type"] == "boolean":
+            DEBUG.write('qsid deserialize: bool %s = %s\n', qsid, int.from_bytes(data[0:fields[0].get("width", 1)], byteorder="little"))
+            DEBUG.flush()
             return int.from_bytes(data[0:fields[0].get("width", 1)], byteorder="little")
         elif fields[0]["type"] == "integer":
             assert len(fields) == 1
+            DEBUG.write('qsid deserialize: int %s = %s\n', qsid, int.from_bytes(data[0:fields[0]["width"]], byteorder="little"))
+            DEBUG.flush()
             return int.from_bytes(data[0:fields[0]["width"]], byteorder="little")
         else:
             raise RuntimeError("unsupported field")
