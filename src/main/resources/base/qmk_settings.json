@@ -85,11 +85,11 @@
                 { "type": "boolean", "title": "Automouse", "qsid": 501, "width": 1 },
                 { "type": "boolean", "title": "Left mouse scroll", "qsid": 502, "width": 1, "bit": 0 },
                 { "type": "boolean", "title": "Right mouse scroll", "qsid": 502, "width": 1, "bit": 1 },
-                { "type": "integer", "title": "Automouse timeout index (1-4)", "qsid": 503, "width": 1 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 0", "qsid": 504, "width": 2 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 1", "qsid": 505, "width": 2 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 2", "qsid": 506, "width": 2 },
-                { "type": "integer", "title": "Automouse timeout value (ms): 3", "qsid": 507, "width": 2 }
+                { "type": "integer", "title": "Automouse timeout index", "qsid": 503, "min": 0, "max": 4, "width": 1 },
+                { "type": "integer", "title": "Automouse timeout value (ms): 0", "qsid": 504, "min": -1, "max": 60000, "width": 2 },
+                { "type": "integer", "title": "Automouse timeout value (ms): 1", "qsid": 505, "min": -1, "max": 60000, "width": 2 },
+                { "type": "integer", "title": "Automouse timeout value (ms): 2", "qsid": 506, "min": -1, "max": 60000, "width": 2 },
+                { "type": "integer", "title": "Automouse timeout value (ms): 3", "qsid": 507, "min": -1, "max": 60000, "width": 2 }
             ]
         }
     ]
