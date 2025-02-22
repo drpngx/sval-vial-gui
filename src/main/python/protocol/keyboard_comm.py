@@ -75,8 +75,6 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
         self.encoderpos = OrderedDict()
         self.layout = dict()
         self.encoder_layout = dict()
-        # Definition for custom qmk settings.
-        self.vial_meta_custom_qmk_settings = []
 
         self.reload_layout(sideload_json)
         self.reload_layers()
@@ -401,7 +399,6 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
         data["tap_dance"] = self.save_tap_dance()
         data["combo"] = self.save_combo()
         data["key_override"] = self.save_key_override()
-        data["vial_meta_custom_qmk_settings"] = self.vial_meta_custom_qmk_settings
         data["settings"] = self.settings
 
         return json.dumps(data).encode("utf-8")
@@ -430,7 +427,7 @@ class Keyboard(ProtocolMacro, ProtocolDynamic, ProtocolTapDance, ProtocolCombo, 
         self.restore_tap_dance(data.get("tap_dance", []))
         self.restore_combo(data.get("combo", []))
         self.restore_key_override(data.get("key_override", []))
-        self.vial_meta_custom_qmk_settings = data.get("vial_meta_custom_qmk_settings", [])
+
         for qsid, value in data.get("settings", dict()).items():
             from editor.qmk_settings import QmkSettings
 

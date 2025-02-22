@@ -118,8 +118,6 @@ class QmkSettings(BasicEditor):
         self.tabs = []
         self.misc_widgets = []
 
-        self.custom_settings_tab_defs = []  # Present in the layout file.
-
     def populate_tab(self, tab, container):
         options = []
         for field in tab["fields"]:
@@ -151,7 +149,7 @@ class QmkSettings(BasicEditor):
             self.tabs_widget.removeTab(0)
 
         # create new GUI
-        for tab in self.settings_defs["tabs"] + self.custom_settings_tab_defs:
+        for tab in self.settings_defs["tabs"]:
             # don't bother creating tabs that would be empty - i.e. at least one qsid in a tab should be supported
             use_tab = False
             for field in tab["fields"]:
@@ -202,16 +200,6 @@ class QmkSettings(BasicEditor):
 
         self.btn_save.setEnabled(changed)
         self.btn_undo.setEnabled(changed)
-
-    def update_custom_layout(self, data: str):
-        # Add the layout-defined tabs. A self.recreate_gui will be issued shortly.
-        layout = json.loads(data)
-        custom_tabs = layout.get("vial_meta_custom_qmk_settings")
-        if not custom_tabs:
-            return
-        if not isinstance(custom_tabs, list):
-            return  # TODO(drpngx): use a popup
-        self.custom_settings_tab_defs = list(custom_tabs)
 
     def rebuild(self, device):
         super().rebuild(device)
